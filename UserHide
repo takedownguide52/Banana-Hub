@@ -1,0 +1,99 @@
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+
+-- Hide all standard overhead usernames locally
+local function hideOverheadName(player, character)
+    local humanoid = character:WaitForChild("Humanoid", 10)
+
+    if humanoid then
+        humanoid.DisplayDistanceType =
+            Enum.HumanoidDisplayDistanceType.None
+    end
+end
+
+local function setupPlayer(player)
+    player.CharacterAdded:Connect(function(character)
+        hideOverheadName(player, character)
+    end)
+
+    if player.Character then
+        task.spawn(hideOverheadName, player, player.Character)
+    end
+end
+
+for _, player in ipairs(Players:GetPlayers()) do
+    setupPlayer(player)
+end
+
+Players.PlayerAdded:Connect(setupPlayer)
+
+-- Create popup UI
+local gui = Instance.new("ScreenGui")
+gui.Name = "BananaHubPopup"
+gui.ResetOnSpawn = false
+
+-- For a game you own, put this script in a LocalScript
+-- and parent the GUI to the player's PlayerGui.
+local localPlayer = Players.LocalPlayer
+if not localPlayer then
+    return
+end
+
+gui.Parent = localPlayer:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Name = "Popup"
+frame.Size = UDim2.new(0, 250, 0, 90)
+frame.Position = UDim2.new(1, -270, 1, -115)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 32)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = frame
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(255, 190, 60)
+stroke.Thickness = 1.5
+stroke.Parent = frame
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -45, 0, 35)
+title.Position = UDim2.new(0, 14, 0, 10)
+title.BackgroundTransparency = 1
+title.Text = "🍌 Banana Hub"
+title.TextColor3 = Color3.fromRGB(255, 200, 70)
+title.TextSize = 19
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = frame
+
+local subtitle = Instance.new("TextLabel")
+subtitle.Size = UDim2.new(1, -28, 0, 25)
+subtitle.Position = UDim2.new(0, 14, 0, 48)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = "Made by Riley"
+subtitle.TextColor3 = Color3.fromRGB(220, 220, 230)
+subtitle.TextSize = 14
+subtitle.Font = Enum.Font.Gotham
+subtitle.TextXAlignment = Enum.TextXAlignment.Left
+subtitle.Parent = frame
+
+local close = Instance.new("TextButton")
+close.Size = UDim2.new(0, 28, 0, 28)
+close.Position = UDim2.new(1, -35, 0, 7)
+close.BackgroundColor3 = Color3.fromRGB(55, 55, 65)
+close.Text = "X"
+close.TextColor3 = Color3.fromRGB(255, 255, 255)
+close.TextSize = 14
+close.Font = Enum.Font.GothamBold
+close.Parent = frame
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = close
+
+close.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
